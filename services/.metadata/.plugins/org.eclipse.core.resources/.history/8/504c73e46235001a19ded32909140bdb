@@ -1,0 +1,5 @@
+package com.hubspot.shubham.model;
+
+public class PartnerModel {
+
+}

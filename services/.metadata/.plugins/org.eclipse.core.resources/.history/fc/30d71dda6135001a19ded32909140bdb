@@ -1,0 +1,5 @@
+package com.hubspot.shubham.repository;
+
+public interface HubspotApiServiceRepo {
+
+}

@@ -1,0 +1,8 @@
+package com.hubspot.shubham.repository;
+
+public interface HubspotApiServiceRepo {
+
+	String APIURL_get = "https://candidate.hubteam.com/candidateTest/v1/partners?userKey=bede60f886f7068a632c7911919d";
+	String APIURL_post = "https://candidate.hubteam.com/candidateTest/v1/results?userKey=bede60f886f7068a632c7911919d";
+
+}

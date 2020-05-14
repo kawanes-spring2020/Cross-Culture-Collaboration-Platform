@@ -1,0 +1,18 @@
+package com.javasampleapproach.springrest.postgresql.repo;
+
+import java.util.List;
+
+import com.javasampleapproach.springrest.postgresql.model.*;
+
+
+
+public interface HubspotApiServiceRepo {
+
+	String APIURL_get = "https://candidate.hubteam.com/candidateTest/v3/problem/dataset?userKey=b6cd9406aebfb0ea9dcf05e4a6b0";
+	String APIURL_post = "https://candidate.hubteam.com/candidateTest/v3/problem/result?userKey=b6cd9406aebfb0ea9dcf05e4a6b0";
+
+	public List<PartnerModel> getListOfPartners();
+	public List<Invitation> getInvites(List<PartnerModel> partners);
+	public String rrsHttpPost(String invitationList);
+	public String stringToJSON(List<Invitation> inviteesList);
+}
