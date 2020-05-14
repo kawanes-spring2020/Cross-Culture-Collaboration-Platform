@@ -1,0 +1,77 @@
+<body>
+  <div id="wrapper" class="toggled">
+    <!-- Sidebar -->
+    <div id="sidebar-wrapper">
+      <ul class="sidebar-nav">
+        <li class="sidebar-brand">
+          <a href="#">
+            Admin Dashboard
+          </a>
+        </li>
+        <li>
+          <a [routerLink]="" (click)="getSouvenirsBought()">Souvenirs Bought</a>
+        </li>
+        <li>
+          <a [routerLink]="" (click)="usersRegistered()">Users Registered</a>
+        </li>
+        <li>
+          <a href="#"></a>
+        </li>
+        <li>
+          <a href="#">Events</a>
+        </li>
+        <li>
+          <a href="#">About</a>
+        </li>
+        <li>
+          <a href="#">Services</a>
+        </li>
+        <li>
+          <a href="#">Contact</a>
+        </li>
+      </ul>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+      <div class="container-fluid">
+        <h1>Simple Sidebar</h1>
+        <p>
+          This template has a responsive menu toggling system. The menu will
+          appear collapsed on smaller screens, and will appear non-collapsed on
+          larger screens. When toggled using the button below, the menu will
+          appear/disappear. On small screens, the page content will be pushed
+          off canvas.
+        </p>
+
+        <div
+          id="barStat"
+          class="wrapper"
+          *ngIf="flag"
+          else
+          pageHead
+          style="display: block"
+        >
+          <canvas
+            mdbChart
+            [chartType]="chartType"
+            [datasets]="chartDatasets"
+            [labels]="chartLabels"
+            [colors]="chartColors"
+            [options]="chartOptions"
+            [legend]="true"
+            (chartHover)="chartHovered($event)"
+            (chartClick)="chartClicked($event)"
+          >
+          </canvas>
+        </div>
+        <div id="pageHead"></div>
+      </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+  </div>
+  <!-- /#wrapper -->
+
+  <!-- Menu Toggle Script -->
+</body>

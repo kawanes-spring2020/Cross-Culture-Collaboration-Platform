@@ -1,0 +1,64 @@
+<div class="container">
+  <div class="row my-2">
+    <div class="col-lg-8 order-lg-2">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a
+            href=""
+            data-target="#profile"
+            data-toggle="tab"
+            class="nav-link active"
+            >Profile</a
+          >
+        </li>
+      </ul>
+      <div class="tab-content py-4">
+        <div class="tab-pane active" id="profile">
+          <h5 class="mb-3">User Profile</h5>
+          <div class="row">
+            <div class="col-md-6">
+              <h6>First Name</h6>
+              <p>
+                {{ customer.firstname }}
+              </p>
+              <h6>Last Name</h6>
+              <p>
+                {{ customer.lastname }}
+              </p>
+              <h6>Username</h6>
+              <p>
+                {{ customer.username }}
+              </p>
+              <strong><h6>My Recent Purchase</h6></strong>
+              <div
+                *ngIf="customer.souvenirbought != null"
+                class="card card-cascade narrower"
+              >
+                <!-- Card image -->
+                <div class="view view-cascade overlay">
+                  <img
+                    class="card-img-top "
+                    [src]="customer.souvenirbought"
+                    alt="Card image cap"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--/row-->
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 order-lg-1 text-center" style="margin-top:50px;">
+      <label class="hoverable" for="fileInput">
+        <img
+          [src]="url ? url : 'https://www.w3schools.com/howto/img_avatar.png'"
+        />
+        <div class="hover-text">Choose file</div>
+        <div class="background"></div>
+      </label>
+      <br />
+      <input id="fileInput" type="file" (change)="onSelectFile($event)" />
+    </div>
+  </div>
+</div>

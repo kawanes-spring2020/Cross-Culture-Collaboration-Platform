@@ -1,0 +1,127 @@
+<section class="view intro-2 rgba-gradient">
+  <div class="full-bg-img">
+    <div class="container" id="container">
+      <div class="form-container sign-up-container">
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+          <h1>Create Account</h1>
+          <div class="form-group">
+            <label>First Name</label>
+            <input
+              type="text"
+              [(ngModel)]="customer.firstname"
+              formControlName="firstName"
+              class="form-control"
+              [ngClass]="{ 'is-invalid': submitted &amp;&amp; registerForm.controls.firstName.errors }"
+            />
+            <div
+              *ngIf="submitted &amp;&amp; registerForm.controls.firstName.errors"
+              class="text-danger"
+            >
+              <div *ngIf="registerForm.controls.firstName.errors.required">
+                First Name is required
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input
+              type="text"
+              [(ngModel)]="customer.lastname"
+              formControlName="lastName"
+              class="form-control"
+              [ngClass]="{ 'is-invalid': submitted &amp;&amp; registerForm.controls.lastName.errors }"
+            />
+            <div
+              *ngIf="submitted &amp;&amp; registerForm.controls.lastName.errors"
+              class="text-danger"
+            >
+              <div *ngIf="registerForm.controls.lastName.errors.required">
+                Last Name is required
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input
+              type="text"
+              [(ngModel)]="customer.username"
+              formControlName="email"
+              class="form-control"
+              [ngClass]="{ 'is-invalid': submitted &amp;&amp; registerForm.controls.email.errors }"
+            />
+            <div
+              *ngIf="submitted &amp;&amp; registerForm.controls.email.errors"
+              class="text-danger"
+            >
+              <div *ngIf="registerForm.controls.email.errors.required">
+                Email is required
+              </div>
+              <div *ngIf="registerForm.controls.email.errors.email">
+                Email must be a valid email address
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              [(ngModel)]="customer.password"
+              formControlName="password"
+              class="form-control"
+              [ngClass]="{ 'is-invalid': submitted &amp;&amp; registerForm.controls.password.errors }"
+            />
+            <div
+              *ngIf="submitted &amp;&amp; registerForm.controls.password.errors"
+              class="text-danger"
+            >
+              <div *ngIf="registerForm.controls.password.errors.required">
+                Password is required
+              </div>
+              <div *ngIf="registerForm.controls.password.errors.minlength">
+                Password must be at least 6 characters
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <button class="btn btn-primary">Register</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="form-container sign-in-container">
+        <form action="#">
+          <h1>Sign in</h1>
+          <input
+            type="email"
+            placeholder="Email"
+            name="username"
+            [(ngModel)]="username"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            name="password"
+            [(ngModel)]="password"
+          />
+          <button (click)="validateUser()">Sign In</button>
+        </form>
+      </div>
+      <div class="overlay-container">
+        <div class="overlay">
+          <div class="overlay-panel overlay-left">
+            <h1>Welcome Back!</h1>
+            <p>
+              To keep connected with us please login with your personal info
+            </p>
+            <button class="ghost" id="signIn">Sign In</button>
+          </div>
+          <div class="overlay-panel overlay-right">
+            <h1>Hello, Friend!</h1>
+            <p>Enter your personal details and start journey with us</p>
+            <button class="ghost" id="signUp">Sign Up</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

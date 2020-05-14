@@ -1,0 +1,239 @@
+package com.javasampleapproach.springrest.postgresql.repo;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.Map.Entry;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.springframework.stereotype.Service;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.hubspot.api.entity.Invitation;
+import com.hubspot.api.entity.Partner;
+import com.hubspot.api.entity.PartnerModel;
+import com.javasampleapproach.springrest.postgresql.model.*;
+
+@Service
+public class HubspotApiServiceRepoImpl implements HubspotApiServiceRepo {
+
+	@Override
+	public List<PartnerModelModel> getListOfPartnerModels() {
+		List<PartnerModelModel> PartnerModelList = new ArrayList<PartnerModelModel>();
+		try {
+			
+			String PartnerModelJsonData = getUrl();
+			System.out.println(PartnerModelJsonData);
+			
+			JSONParser parser = new JSONParser();	    	
+			Object obj = parser.parse(PartnerModelJsonData);	 
+
+			JSONObject json = (JSONObject) obj;
+
+			JSONArray result = (JSONArray) json.get("PartnerModels");
+			System.out.println("Result : " + json.get("PartnerModels"));
+
+			Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+
+			for (int i = 0; i < result.size(); i++) {
+
+				JSONObject jsonPartnerModel = (JSONObject) result.get(i);
+
+				PartnerModelModel PartnerModel = gson.fromJson(jsonPartnerModel.toJSONString(), PartnerModelModel.class);
+
+				PartnerModelList.add(PartnerModel);
+
+			}
+			
+			return PartnerModelList;
+
+			
+		}
+		catch(Exception e) {
+			
+		}
+		return null;
+	}
+	
+public List<Invitation> getInvites(List<PartnerModelModel> PartnerModels) {
+		
+		List<Invitation> invites = new ArrayList<Invitation>();
+		
+		Map<String, Map<Date, List<PartnerModel>>> invitationMap = getInvitationList(PartnerModels);
+		
+		for(Entry<String, Map<Date, List<PartnerModel>>> invitationEntry : invitationMap.entrySet()) {
+			
+			Map<Date, List<PartnerModel>> dateMap = invitationEntry.getValue();
+			
+			int max = -1;
+			Date date  = null;
+			List<PartnerModel> availablePartnerModelList = null;
+
+			for (Map.Entry<Date, List<PartnerModel>> entry : dateMap.entrySet()) {
+
+				List<PartnerModel> PartnerModelList = entry.getValue();
+
+				if(PartnerModelList.size() > max) {
+					max = PartnerModelList.size();
+					date = entry.getKey();
+					availablePartnerModelList = PartnerModelList;
+				}
+			}	
+			
+			Invitation i = new Invitation();
+			
+			i.setAttendeeCount(availablePartnerModelList.size());
+
+			List<String> emailList  = new ArrayList<String>();
+			for(PartnerModel PartnerModel : availablePartnerModelList)
+				emailList.add(PartnerModel.getEmail());
+			i.setAttendees(emailList);
+
+			i.setName(invitationEntry.getKey());
+			i.setStartDate(date);
+			invites.add(i);
+		}
+		
+		return invites;
+	}
+
+	public Map<String, Map<Date, List<PartnerModel>>> getInvitationList(List<PartnerModel> PartnerModelList) {
+
+	Map<String, List<PartnerModel>> countryMap = buildCountryDates(PartnerModelList);
+	
+	Map<String, Map<Date, List<PartnerModel>>> invitatonMap = new HashMap<String, Map<Date, List<PartnerModel>>>();
+
+	for(Map.Entry<String, List<PartnerModel>> countryEntry : countryMap.entrySet()) {
+
+		List<PartnerModel> PartnerModels = countryEntry.getValue();
+
+		Set<Date> setDate = new TreeSet<Date>();
+		
+		for(PartnerModel p : PartnerModels) {
+			setDate.addAll(feasibleDatesForPartnerModel(p));			
+		}		
+		
+		//countryDate.put(countryEntry.getKey(), setDate);
+		Map<Date, List<PartnerModel>> PartnerModelMap = new TreeMap<Date, List<PartnerModel>>();
+		
+		for(PartnerModel p : PartnerModels) {
+			List<Date> PartnerModelDate = feasibleDatesForPartnerModel(p);
+			
+			for(Date d : PartnerModelDate) {
+				if(setDate.contains(d)) {
+					List<PartnerModel> par = new ArrayList<PartnerModel>();
+					if(PartnerModelMap.containsKey(d)) {
+						par = PartnerModelMap.get(d);							
+					}					
+					par.add(p);
+					PartnerModelMap.put(d, par);
+				}
+			}
+		}
+		
+		invitatonMap.put(countryEntry.getKey(), PartnerModelMap);
+		
+	}
+	
+	return invitatonMap;
+}
+	public Map<String, List<PartnerModel>> buildCountryDates(List<PartnerModel> partners) 
+	{
+		//Map<Date, Integer> startDates = new HashMap<Date, Integer>();
+
+		Map<String, List<PartnerModel>> countryDates = new HashMap<String, List<PartnerModel>>();
+
+		for(PartnerModel p : partners) {
+
+			List<PartnerModel> partnerList = new ArrayList<PartnerModel>();
+
+			if(countryDates.containsKey(p.getCountry())) {
+				partnerList = countryDates.get(p.getCountry());				
+				partnerList.add(p);
+			}
+			else {
+				partnerList.add(p);
+				countryDates.put(p.getCountry(), partnerList);
+			}
+		}
+
+		return countryDates;
+	}
+	
+	public List<Date> feasibleDatesForPartner(PartnerModel partner)
+	{
+
+		Collections.sort(partner.getAvailableDates());
+
+		Map<Date, Integer> startDates = new TreeMap<Date, Integer>();
+
+		List<Date> sortedDates = partner.getAvailableDates();
+
+		startDates.put(sortedDates.get(0), 0);
+
+		for (int i = 1; i < sortedDates.size() ; i++)
+		{			
+			Date prevDate = sortedDates.get(i-1);
+			Date curDate = sortedDates.get(i);
+
+			long diff = Math.abs(curDate.getTime() - prevDate.getTime());
+			long diffDays = diff / (24 * 60 * 60 * 1000);
+
+			if(diffDays == 1) {					
+				int count  = startDates.get(prevDate);
+				startDates.put(prevDate, count+1);
+				startDates.put(curDate, 1);
+			}
+			startDates.put(curDate, 0);
+		}
+
+		List<Date> feasibleDates = new ArrayList<Date>();
+
+		for(Map.Entry<Date, Integer> dateEntry : startDates.entrySet()) {			
+			if(dateEntry.getValue()  > 0) {
+				feasibleDates.add(dateEntry.getKey());
+			}
+		}
+
+		return feasibleDates;
+	}
+	
+	public String getUrl() throws IOException {
+		URL urlForGetRequest = new URL(APIURL_get);
+	    String readLine = null;
+	    StringBuffer response = null;
+	    HttpURLConnection conection = (HttpURLConnection) urlForGetRequest.openConnection();
+	    conection.setRequestMethod("GET");
+	    int responseCode = conection.getResponseCode();
+	    if (responseCode == HttpURLConnection.HTTP_OK) {
+	        BufferedReader in = new BufferedReader(
+	            new InputStreamReader(conection.getInputStream()));
+	        response = new StringBuffer();
+	        while ((readLine = in .readLine()) != null) {
+	            response.append(readLine);
+	        } in .close();
+	        // print result
+	        System.out.println("JSON String Result " + response.toString());
+	        //GetAndPost.POSTRequest(response.toString());
+	    } else {
+	        System.out.println("GET NOT WORKED");
+	    }
+		return response.toString();
+	}
+
+	
+}

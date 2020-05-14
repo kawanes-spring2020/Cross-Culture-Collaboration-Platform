@@ -1,0 +1,55 @@
+<div *ngIf="paidFor">
+  <h1>Yay, you bought this souvenir!!!!!</h1>
+</div>
+
+<div *ngIf="!paidFor" class="container">
+  <div class="row my-2">
+    <div class="col-lg-8 order-lg-2">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a
+            href=""
+            data-target="#profile"
+            data-toggle="tab"
+            class="nav-link active"
+            >Souvenir Description</a
+          >
+        </li>
+      </ul>
+      <div class="tab-content py-4">
+        <div class="tab-pane active" id="profile">
+          <h5 class="mb-3">Product Details</h5>
+          <br />
+          <div class="row">
+            <div class="col-md-6">
+              <strong><h6>Prodcut Name</h6></strong>
+              <p>
+                {{ product.itemName }}
+              </p>
+              <strong><h6>Product Description</h6></strong>
+              <p>
+                {{ product.itemDesc }}
+              </p>
+              <strong><h6>Product Price</h6></strong>
+              <p>
+                <strong>{{ product.itemPrice }}</strong>
+              </p>
+              <strong><h6>Product Sold</h6></strong>
+              <p>
+                <strong>{{ product.itemBought }}</strong>
+              </p>
+            </div>
+          </div>
+          <!--/row-->
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 order-lg-1 text-center">
+      <label class="hoverable">
+        <img [src]="product.itemImage" />
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="buttons" [hidden]="paidFor" #paypal></div>

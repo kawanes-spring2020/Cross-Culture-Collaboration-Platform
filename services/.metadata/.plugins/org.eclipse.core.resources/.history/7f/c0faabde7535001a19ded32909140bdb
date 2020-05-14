@@ -1,0 +1,43 @@
+package com.javasampleapproach.springrest.postgresql.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import com.javasampleapproach.springrest.postgresql.model.*;
+import com.javasampleapproach.springrest.postgresql.repo.HubspotApiServiceRepo;
+
+@RestController
+@RequestMapping("/starterapi")
+public class CustomerController {
+
+	@Autowired
+	public HubspotApiServiceRepo hubspotApiServiceRepo;
+	
+	private List<PartnerModel> listOfPartners;
+	private List<Invitation> inviteesList;
+	
+	@RequestMapping(method=RequestMethod.GET, value="/getpartners")
+	public String invite() {
+		String invitationString = null;
+		
+		listOfPartners = hubspotApiServiceRepo.getListOfPartners();
+		if(listOfPartners == null) {
+			System.out.println("Partners list not found");
+			
+		}
+		
+		inviteesList = hubspotApiServiceRepo.getInvites(listOfPartners);
+		
+		if(inviteesList == null) {
+			System.out.println("There was error processing the invitation list!!");
+		}
+
+		String invitationList = hubspotApiServiceRepo.stringToJSON(inviteesList);
+		
+		System.out.println("Invitation List is: "+invitationList);
+		return hubspotApiServiceRepo.rrsHttpPost(invitationList);
+	}
+}

@@ -1,0 +1,43 @@
+<div class="container">
+  <div class="row">
+    <div
+      class="col-md-3 mb-4 d-flex align-items-stretch"
+      *ngFor="let card of souvenirArray"
+    >
+      <div class="card card-cascade narrower">
+        <!-- Card image -->
+        <div class="view view-cascade overlay">
+          <img
+            class="card-img-top "
+            [src]="card.itemImage"
+            alt="Card image cap"
+          />
+          <a href="#!">
+            <div class="mask rgba-white-slight"></div>
+          </a>
+        </div>
+
+        <!-- Card content -->
+        <div class="card-body card-body-cascade text-center">
+          <!-- Title -->
+          <h4 class="card-title">
+            {{ card.itemName }}
+          </h4>
+          <!-- Subtitle -->
+          <h5 class="blue-text pb-2">
+            <strong>Price: {{ card.itemPrice }}</strong>
+          </h5>
+          <!-- Text -->
+          <p class="card-text">Description: {{ card.itemDesc }}</p>
+
+          <div class="bottom rounded-bottom mdb-color lighten-3 pt-2">
+            <strong style="align-content: center"
+              >Purchase Count: {{ card.itemBought }}</strong
+            >
+          </div>
+          <a class="btn btn-unique" (click)="payout(card)">Buy</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,7 @@
+INDEX VERSION 1.4+E:\Web Design Course\Project\web-design\services\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+4045244999.index
+3644350727.index
+3474103509.index
+3199379087.index
+892561961.index
+553943619.index

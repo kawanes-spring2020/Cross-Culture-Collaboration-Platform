@@ -1,0 +1,63 @@
+<p id="countryTitle" class="h1 text-center"></p>
+<div class="scene">
+  <div id="carouselId" class="carousel">
+    <div class="carousel__cell"></div>
+    <div class="carousel__cell"></div>
+    <div class="carousel__cell"></div>
+    <div class="carousel__cell"></div>
+    <div class="carousel__cell"></div>
+  </div>
+</div>
+
+<p style="text-align: center;">
+  <mdb-icon
+    (click)="previousButton()"
+    class="mr-3"
+    fas
+    icon="angle-left"
+  ></mdb-icon>
+  <mdb-icon
+    (click)="nextButton()"
+    class="ml-3"
+    fas
+    icon="angle-right"
+  ></mdb-icon>
+</p>
+<section>
+  <div class="container">
+    <div class="row" *ngFor="let card of mapToDisplay">
+      <div class="col-lg-3" *ngFor="let item of card | keyvalue">
+        <div>
+          <!-- Card Flip -->
+          <div class="card-flip">
+            <div class="flip">
+              <div class="front">
+                <!-- front content -->
+                <div class="card">
+                  <img
+                    class="card-img-top"
+                    [src]="item.key"
+                    alt="100%x180"
+                    style="height: 180px; width: 100%; display: block;"
+                    data-holder-rendered="true"
+                  />
+                </div>
+              </div>
+              <div class="back">
+                <!-- back content -->
+                <div id="cardText" class="card">
+                  <div class="card-block">
+                    <p class="card-text" [style]="safeCss(cardColor)">
+                      {{ item.value }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- End Card Flip -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

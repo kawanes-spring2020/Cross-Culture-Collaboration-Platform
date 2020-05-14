@@ -1,0 +1,85 @@
+package com.javasampleapproach.springrest.postgresql.repo;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.springframework.stereotype.Service;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.hubspot.shubham.model.PartnerModel;
+
+@Service
+public class HubspotApiServiceRepoImpl implements HubspotApiServiceRepo {
+
+	@Override
+	public List<PartnerModel> getListOfPartners() {
+		List<PartnerModel> partnerList = new ArrayList<PartnerModel>();
+		try {
+			
+			String partnerJsonData = getUrl();
+			System.out.println(partnerJsonData);
+			
+			JSONParser parser = new JSONParser();	    	
+			Object obj = parser.parse(partnerJsonData);	 
+
+			JSONObject json = (JSONObject) obj;
+
+			JSONArray result = (JSONArray) json.get("partners");
+			System.out.println("Result : " + json.get("partners"));
+
+			Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+
+			for (int i = 0; i < result.size(); i++) {
+
+				JSONObject jsonPartner = (JSONObject) result.get(i);
+
+				PartnerModel partner = gson.fromJson(jsonPartner.toJSONString(), PartnerModel.class);
+
+				partnerList.add(partner);
+
+			}
+			
+			return partnerList;
+
+			
+		}
+		catch(Exception e) {
+			
+		}
+		return null;
+	}
+	
+	public String getUrl() throws IOException {
+		URL urlForGetRequest = new URL(APIURL_get);
+	    String readLine = null;
+	    StringBuffer response = null;
+	    HttpURLConnection conection = (HttpURLConnection) urlForGetRequest.openConnection();
+	    conection.setRequestMethod("GET");
+	    int responseCode = conection.getResponseCode();
+	    if (responseCode == HttpURLConnection.HTTP_OK) {
+	        BufferedReader in = new BufferedReader(
+	            new InputStreamReader(conection.getInputStream()));
+	        response = new StringBuffer();
+	        while ((readLine = in .readLine()) != null) {
+	            response.append(readLine);
+	        } in .close();
+	        // print result
+	        System.out.println("JSON String Result " + response.toString());
+	        //GetAndPost.POSTRequest(response.toString());
+	    } else {
+	        System.out.println("GET NOT WORKED");
+	    }
+		return response.toString();
+	}
+
+	
+}
